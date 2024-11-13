@@ -1,4 +1,5 @@
-FROM mcr.microsoft.com/devcontainers/universal:latest
+# Base image with necessary packages
+FROM ubuntu:latest
 
 # Update the system
 RUN apt update
@@ -6,12 +7,22 @@ RUN apt update
 # Upgrade the system
 RUN apt full-upgrade
 
-# Preconfigure the default display manager to be "sddm"
-RUN echo "sddm shared/default-x-display-manager select sddm" | debconf-set-selections
+# Install necessary packages for KDE, X11, and VNC
+RUN apt-get update && \
+    echo "sddm shared/default-x-display-manager select sddm" | debconf-set-selections && \
+    apt-get install -y kde-plasma-desktop xorg dbus-x11 sddm tigervnc-standalone-server
 
-# Install KDE, Xorg, and dbus-x11
-RUN apt-get update && apt-get install -y kde-plasma-desktop xorg dbus-x11 sddm
+# Set up a non-interactive VNC password
+RUN mkdir -p /root/.vnc && \
+    echo "your_password_here" | vncpasswd -f > /root/.vnc/passwd && \
+    chmod 600 /root/.vnc/passwd
 
-# Start the plasma desktop
+# Configure the VNC server to use KDE Plasma
+RUN echo '#!/bin/bash\nunset SESSION_MANAGER\nunset DBUS_SESSION_BUS_ADDRESS\nexec startplasma-x11 &' > /root/.vnc/xstartup && \
+    chmod +x /root/.vnc/xstartup
 
-CMD [ "exec startplasma-x11 &" ]
+# Expose the VNC port
+EXPOSE 5901
+
+# Start the VNC server
+CMD ["vncserver", "-geometry", "1920x1080", ":1"]
