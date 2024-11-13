@@ -10,6 +10,9 @@ fi
 apt update
 apt full-upgrade
 
+apt install -y sddm
+apt install -y kde-plasma-desktop xorg dbus-x11
+
 unset SESSION_MANAGER
 unset DBUS_SESSION_BUS_ADDRESS
 
