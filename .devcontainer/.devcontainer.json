@@ -1,0 +1,23 @@
+{
+    "name": "KDE with noVNC",
+    "build": {
+      "dockerfile": "Dockerfile",
+      "context": "."
+    },
+    "forwardPorts": [
+      6080
+    ],
+    "customizations": {
+      "vscode": {
+        "settings": {
+          "terminal.integrated.defaultProfile.linux": "bash"
+        }
+        // "extensions": [
+        //   "ms-vscode-remote.remote-containers"
+        // ]
+      }
+    },
+    "postCreateCommand": "vncserver :1 -geometry 1920x1080 && /opt/novnc/utils/novnc_proxy --vnc localhost:5901 --listen 6080",
+    "remoteUser": "root"
+  }
+  
