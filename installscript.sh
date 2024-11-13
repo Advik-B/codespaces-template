@@ -1,9 +1,9 @@
 #!/bin/bash
 
-if sudo -v 2>&1 > /dev/null; then
-  echo "This script is running with sudo privileges."
-else
-  echo "This script is not running with sudo privileges. Bruh"
+if [[ $EUID -eq 0 ]]; then
+  echo "This script is running with root privileges."
+else 
+  echo "This script is not running with root privileges. RUN IT WITH SUDO!!!"
   exit 1
 fi
 
